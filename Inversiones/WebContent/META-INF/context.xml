@@ -1,0 +1,10 @@
+<!DOCTYPE configuration>
+<Context>
+	<!-- Pool de conexiones a postgresql -->
+	<Resource name="jdbc/Inversiones" auth="Container" type="javax.sql.DataSource"
+		maxTotal="100" maxIdle="30" maxWaitMillis="10000"
+		username="postgres" password=""
+		driverClassName="org.postgresql.Driver"
+		url="jdbc:postgresql://localhost:5432/inversiones">
+	</Resource>	
+</Context>

@@ -1,0 +1,138 @@
+@charset "UTF-8";
+
+
+*{
+    margin: 0;
+    padding:  0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+    
+}
+#main{
+    width: 100%;
+}
+
+body{
+    background-image: url('../img/fondoLogin.png');
+}
+
+.content-all{
+    width: 800px;
+    height: 450px;
+    display: flex;
+    margin: auto;
+    padding: 40px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 10px;
+    box-shadow: inset 0 0 20px black;
+    perspective: 800px;
+    margin-top: 100px;  
+}
+
+
+.content-register{
+    width: 50%;
+    background: white;
+    border: 1px solid white;
+    padding: 10px;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
+    border-radius: 2%;
+}
+
+.content-register h3{
+    text-align: center;
+    text-shadow: 2px 1px 5px rgba(0,0,0,0.8);
+}
+
+.content-register p{
+    margin-top: 10px;
+}
+
+.content-register input{
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    margin-top:10px;
+}
+
+.content-register input[type="submit"]{
+    width: 50%;
+    border-style: none;
+    background: #84e36d;
+    color: white;
+    outline: 0px;
+}
+
+.content-register input[type="submit"]:hover{
+    background: 0 0 5px #c5efbd; 
+    color: white; 
+}
+
+content-register p{
+    margin-top: 10px;
+}
+
+content-register a{
+    color: blue;
+}
+
+
+.content-login h3{
+    text-align: center;
+    text-shadow: 2px 1px 5px rgba(0,0,0,0.8);
+}
+
+.content-login input{
+    width:  100%;
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 10px;
+    box-shadow: inset 3px 3px 5px rgba(0,0,0,0.6);
+    border: none;
+    border-radius: 5px;
+}
+
+.content-register input{
+    width:  100%;
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 10px;
+    box-shadow: inset 3px 3px 5px rgba(0,0,0,0.6);
+    border: none;
+    border-radius: 5px;
+}
+
+.content-register input:focus{
+    outline: none;
+    box-shadow: inset 3px 3px 5px rgba(0,0,0,0.8);
+}
+
+.content-register input[type="submit"]{
+    width: 50%;
+    border-style: none;
+    background: #0a3636;
+    color: white;
+    outline: 0px;
+    box-shadow: 1px 1px 5px rgb(46, 55, 63);
+    border-radius: 5%;
+}
+
+.content-register input[type="submit"]:hover{
+    background: #0d4e4d; 
+    text-shadow: 0 0 5px white;  
+}
+
+.content-register p{
+    margin-top: 10px;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+}
+
+.content-register a{
+    color: rgb(9, 58, 28);
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+}
+
+.content-register a:hover{
+    color: rgb(15, 97, 47);
+    text-shadow: 0px 0px 1px white;
+}
