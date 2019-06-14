@@ -22,18 +22,22 @@
     
 </head>
 <body>
-	<div class="content-register" id="form-register">
-   		<form action="ControladorLogin" method="post">
-         <h3>Registro</h3>
-         <input type="hidden" name="instruccion" value="registro">
-         <input type="text" placeholder="Nombre de usuario" name="nombre">
-         <input type="password" placeholder="Contraseña" name="pass">
-         <input type="submit" value="registrarse">
-         <p>¿Ya estás registrado? <a href="login.jsp">Inicia sesión aquí</a></p>
-         <c:if test="${ errorRegistro }">
-         		<p class="error">Error de registro: Revise los datos ingresados</p>
-         </c:if>
-      </form>
-    </div>
+	<div id="main">
+		<div class="content-all">
+			<div class="content-register" id="form-register">
+		   		<form action="ControladorLogin" method="post">
+		         <h3>Registro</h3>
+		         <input type="hidden" name="instruccion" value="registro">
+		         <input type="text" placeholder="Nombre de usuario" name="nombre">
+		         <input type="password" placeholder="Contraseña" name="pass">
+		         <input type="submit" value="registrarse">
+		         <p>¿Ya estás registrado? <a href="login.jsp">Inicia sesión aquí</a></p>
+		         <c:if test="${ errorRegistro }">
+		         		<p class="error">Error de registro: Revise los datos ingresados</p>
+		         </c:if>
+		      </form>
+		    </div>
+	    </div>
+	</div>
 </body>
 </html>

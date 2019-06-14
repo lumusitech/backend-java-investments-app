@@ -24,7 +24,6 @@
 <body>
     <div id="main">
        <div class="content-all">
-           <h2 class="text-register">Registro</h2>
             <div class="content-login" id="form-login">
             	<form action="ControladorLogin" method="post">
 	                <h3>Login</h3>
@@ -39,7 +38,7 @@
                 </form>
             </div>
             
-            <h2 class="text-login">Login</h2>
+            
        </div>
     </div>
 </body>
