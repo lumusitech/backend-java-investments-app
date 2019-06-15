@@ -74,12 +74,15 @@ private ModeloClientes modeloClientes;
 		//Leer la información del Cliente que viene del formulario
 		String nombre = request.getParameter("nombre");
 		String pass = request.getParameter("pass");
-		
+		String nac = request.getParameter("nac");
+		String email = request.getParameter("email");
+		String dni = request.getParameter("dni");
+		Double saldo = 135265.50;
 		
 		if(!nombre.equals("") && !pass.equals("")) {//Comprobar lo que se necesite
 			//Crear un objeto de tipo Cliente
-			Cliente cliente = new Cliente(nombre, pass);
-			
+			Cliente cliente = new Cliente(nombre, pass, nac, email, dni, saldo, TipoPerfil.NINGUNO);
+			System.out.println(cliente);
 			//Enviar el objeto al modelo para que lo inserte en la BBDD
 			try {
 				modeloClientes.agregarNuevoCliente(cliente);
@@ -94,7 +97,7 @@ private ModeloClientes modeloClientes;
 			miDispatcher.forward(request, response);
 		} else {
 			//Si no se llenaron bien los campos o quedó vacío alguno:
-			//Volver a login para que pueda loguearse
+			//Volver a registro con el msj de error
 			request.setAttribute("errorRegistro", true);
 			RequestDispatcher miDispatcher = request.getRequestDispatcher("/registro.jsp");
 			miDispatcher.forward(request, response);
@@ -119,9 +122,16 @@ private ModeloClientes modeloClientes;
 			//Además, se avisa que no hubo error en el logueo
 			request.setAttribute("errorLogin", false);
 			
-			//Enviar Cliente al portafolio (jsp)
-			RequestDispatcher miDispatcher = request.getRequestDispatcher("/portafolio.jsp");
-			miDispatcher.forward(request, response);
+			//Enviar Cliente al portafolio o a la encuesta(jsp)
+			if(cliente_recibido.getPerfil().equals(TipoPerfil.NINGUNO)) {
+				RequestDispatcher miDispatcher = request.getRequestDispatcher("/perfil.jsp");
+				miDispatcher.forward(request, response);
+			}else {
+				request.setAttribute("cliente", cliente_recibido);
+				RequestDispatcher miDispatcher = request.getRequestDispatcher("/portafolio.jsp");
+				miDispatcher.forward(request, response);
+			}
+			
 		}else {
 			//Login no válido, vuelve a login con mensaje de error
 			request.setAttribute("errorLogin", true);

@@ -15,9 +15,21 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Portafolio</title>
 </head>
 <body>
-	<h1>Este es el portafolio del cliente: ${ cliente.nombre } con el pass: ${ cliente.pass }</h1>
+	<header>
+		<h1>Portafolio - perfil ${ perfil }</h1>
+		<c:forEach var = "producto" items="${ listaProductos }">
+	         Producto: <c:out value = "${producto.getNombre() }"/><p>
+	         Precio: $<c:out value = "${producto.getPrecio() }"/><p>
+	         Cantidad: <c:out value = "${producto.getCantidad() }"/><p>
+      	</c:forEach>
+	</header>
+
+	 <!--<c:if test="${ errorRegistro }">
+        <p class="error">Error de registro: Revise los datos ingresados</p>
+     </c:if>-->
+		      
 </body>
 </html>

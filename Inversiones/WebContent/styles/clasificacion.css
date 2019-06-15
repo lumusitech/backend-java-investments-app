@@ -31,7 +31,8 @@ body{
 }
 
 .boton{
-	
+	background: rgba(50,50,150,0.5);
+	padding: 10px;
 }
 
 
