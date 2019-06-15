@@ -63,6 +63,8 @@ public class ModeloClientes {
 
 	public void agregarNuevoCliente(Cliente cliente) throws Exception{
 		
+		System.out.println(cliente);
+		
 		Connection miConexion = null;
 		PreparedStatement miStatement = null;
 
@@ -72,7 +74,7 @@ public class ModeloClientes {
 		
 			
 			//Crear la instrucción SQL que inserte el Cliente (Statement)
-			String SQL = "INSERT INTO cliente(nombre_usuario, email, pass, saldo, dni, fecha_nacimiento) VALUES(?,?,?,?,?,?,?);";
+			String SQL = "INSERT INTO cliente(nombre_usuario, email, pass, saldo, dni, fecha_nacimiento, perfil) VALUES(?,?,?,?,?,?,?);";
 			miStatement = miConexion.prepareStatement(SQL);
 			
 			//Establecer los parámetros para el Cliente

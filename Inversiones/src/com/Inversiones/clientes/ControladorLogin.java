@@ -81,8 +81,11 @@ private ModeloClientes modeloClientes;
 		
 		if(!nombre.equals("") && !pass.equals("")) {//Comprobar lo que se necesite
 			//Crear un objeto de tipo Cliente
-			Cliente cliente = new Cliente(nombre, pass, nac, email, dni, saldo, TipoPerfil.NINGUNO);
-			System.out.println(cliente);
+			Cliente cliente = new Cliente(nombre, pass, nac, email, dni, saldo, null);
+			cliente.setPerfil(TipoPerfil.NINGUNO);
+			
+			//System.out.println(cliente);//prueba
+			
 			//Enviar el objeto al modelo para que lo inserte en la BBDD
 			try {
 				modeloClientes.agregarNuevoCliente(cliente);
@@ -93,7 +96,7 @@ private ModeloClientes modeloClientes;
 			
 			//Se lo envía a hacer la encuesta para clasificarlo
 			request.setAttribute("errorRegistro", false);
-			RequestDispatcher miDispatcher = request.getRequestDispatcher("/clasificacion.jsp");
+			RequestDispatcher miDispatcher = request.getRequestDispatcher("/perfil.jsp");
 			miDispatcher.forward(request, response);
 		} else {
 			//Si no se llenaron bien los campos o quedó vacío alguno:

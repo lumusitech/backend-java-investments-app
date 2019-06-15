@@ -104,7 +104,7 @@ public class Cliente {
 	@Override
 	public String toString() {
 		return "Cliente:\n\tid=" + id + "\n\tnombre=" + nombre + "\n\tpass=" + pass + "\n\tfechaNacimiento=" + fechaNacimiento
-				+ "\n\temail=" + email + "\n\tdni=" + dni + "\n\tsaldo=" + saldo + "\n\tperfil=" + perfil + "\n";
+				+ "\n\temail=" + email + "\n\tdni=" + dni + "\n\tsaldo=" + saldo + "\n\tperfil=" + getPerfil() + "\n";
 	}
 	
 	

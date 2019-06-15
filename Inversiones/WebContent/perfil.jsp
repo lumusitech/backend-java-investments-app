@@ -22,9 +22,9 @@
 	<div id="content-all">
 		<h1>Test de inversor</h1>
 		<div id="encuesta">
-			<form method="post" action="ControladorPerfil">
+			<form action="ControladorPerfil" method="post">
 				
-				<input type="hidden" name="id_cliente" value="${ cliente.getId() }">
+				<p>"${ cliente.getId() }"</p>
 				
 		        <p class="pregunta">¿A cuánto tiempo quiere invertir?</p>
 		       
