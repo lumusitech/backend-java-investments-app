@@ -63,8 +63,6 @@ public class ModeloClientes {
 
 	public void agregarNuevoCliente(Cliente cliente) throws Exception{
 		
-		System.out.println(cliente);
-		
 		Connection miConexion = null;
 		PreparedStatement miStatement = null;
 
@@ -205,10 +203,37 @@ public class ModeloClientes {
 	
 	//////////////////////////////////////////////////////////////////
 	
-	public boolean actualizarPerfil(int id_cliente, TipoPerfil perfil) {
+	public boolean actualizarPerfil(int id_recibido, TipoPerfil perfil) throws Exception{
+		int resultado = 0;
+		Connection miConexion = null;
+		PreparedStatement miStatement = null;
 		
-		return true;
+		try {			
+			//Obtener la conexión
+			miConexion = origenDatos.getConnection();
+
+			//Crear la instrucción SQL que inserte el Cliente (Statement)
+			String SQL = "UPDATE cliente SET perfil=? WHERE id_cliente=?";
+			miStatement = miConexion.prepareStatement(SQL);
+
+			//Establecer los parámetros para el Cliente
+			miStatement.setString(1, perfil.toString());
+			miStatement.setInt(2, id_recibido);
+
+			//Ejecutar la instrucción SQL
+			resultado = miStatement.executeUpdate();
+			return resultado !=0;
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}finally {
+			miStatement.close();
+			miConexion.close();
+		}
+		return resultado !=0;
 	}
+
+//////////////////////////////////////////////////////////////////
 	
 	
 }

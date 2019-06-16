@@ -19,17 +19,15 @@
 </head>
 <body>
 	<header>
+<%-- 		<c:if test="${ errorRegistro }"> --%>
+<!--        		<p class="error">Error de registro: Revise los datos ingresados</p> -->
+<%--      	</c:if> --%>
 		<h1>Portafolio - perfil ${ perfil }</h1>
 		<c:forEach var = "producto" items="${ listaProductos }">
 	         Producto: <c:out value = "${producto.getNombre() }"/><p>
 	         Precio: $<c:out value = "${producto.getPrecio() }"/><p>
 	         Cantidad: <c:out value = "${producto.getCantidad() }"/><p>
       	</c:forEach>
-	</header>
-
-	 <!--<c:if test="${ errorRegistro }">
-        <p class="error">Error de registro: Revise los datos ingresados</p>
-     </c:if>-->
-		      
+	</header>	      
 </body>
 </html>
