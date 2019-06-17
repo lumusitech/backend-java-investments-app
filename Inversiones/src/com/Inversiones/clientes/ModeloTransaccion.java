@@ -61,18 +61,18 @@ private DataSource origenDatos;
 	
 	//////////////////////////////////////////////////////////////////
 	
-	public boolean realizarTransaccionVenta(Transaccion transaccion) throws Exception{
+	public int realizarTransaccionVenta(Transaccion transaccion) throws Exception{
+		int idGenerado = 0;
 		Connection miConexion = null;
 		PreparedStatement miStatement = null;
 
 		try {
 			//Obtener la conexión
 			miConexion = origenDatos.getConnection();
-		
 			
 			//Crear la instrucción SQL que inserte el Cliente (Statement)
 			String SQL = "INSERT INTO transaccion(fecha, cantidad_producto, id_cliente, id_producto, precio, tipo) VALUES(?,?,?,?,?,?);";
-			miStatement = miConexion.prepareStatement(SQL);
+			miStatement = miConexion.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
 			
 			//Establecer los parámetros para el Cliente
 			miStatement.setString(1, transaccion.getFecha());
@@ -82,16 +82,25 @@ private DataSource origenDatos;
 			miStatement.setDouble(5, transaccion.getTotal());
 			miStatement.setString(6, transaccion.getTipo().toString());
 			
-			//Ejecutar la instrucción SQL
-			miStatement.execute();
+
+			int affectedRows = miStatement.executeUpdate();
+			if (affectedRows == 0) {
+			        throw new SQLException("No se pudo guardar");
+			}
+
+			ResultSet generatedKeys = miStatement.getGeneratedKeys();
+			if (generatedKeys.next()) {
+			         idGenerado = generatedKeys.getInt(1);
+			}
 			
 		} catch (Exception e) {
+			System.out.println(e);
 			// TODO: handle exception
 		}finally {
 			miStatement.close();
 			miConexion.close();
 		}
-		return true;
+		return idGenerado;
 	}
 	
 	//////////////////////////////////////////////////////////////////
@@ -138,12 +147,14 @@ private DataSource origenDatos;
 		Connection miConexion = null;
 		PreparedStatement miStatement = null;
 		
+		System.out.println(producto.getCantidad());
+		
 		try {			
 			//Obtener la conexión
 			miConexion = origenDatos.getConnection();
 
-			//Crear la instrucción SQL que inserte el Cliente (Statement)
-			String SQL = "UPDATE cliente SET cantidad=? WHERE id_producto=?";
+			//Crear la instrucción SQL que actualiza la cantidad de los productos (Statement)
+			String SQL = "UPDATE producto_inversion SET cantidad=? WHERE id_producto=?";
 			miStatement = miConexion.prepareStatement(SQL);
 
 			//Establecer los parámetros para el Cliente
@@ -154,6 +165,7 @@ private DataSource origenDatos;
 			miStatement.executeUpdate();
 			
 		} catch (Exception e) {
+			System.out.println(e);
 			// TODO: handle exception
 		}finally {
 			miStatement.close();
@@ -172,7 +184,7 @@ private DataSource origenDatos;
 			//Obtener la conexión
 			miConexion = origenDatos.getConnection();
 
-			//Crear la instrucción SQL que inserte el Cliente (Statement)
+			//Crear la instrucción SQL que inserte la comisión (Statement)
 			String SQL = "INSERT INTO comision(precio, id_transaccion) VALUES(?,?)";
 			miStatement = miConexion.prepareStatement(SQL);
 
@@ -184,6 +196,7 @@ private DataSource origenDatos;
 			miStatement.executeUpdate();
 			
 		} catch (Exception e) {
+			System.out.println(e);
 			// TODO: handle exception
 		}finally {
 			miStatement.close();
