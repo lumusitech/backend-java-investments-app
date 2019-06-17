@@ -25,6 +25,7 @@
 		var cant = cantidad;
 		var prec = precio;
 		
+		document.getElementById("cantidadASetear").value = cant;
 		
 		document.getElementById("producto").value = prod;
 		document.getElementById("cantidad").value = cant;
@@ -53,7 +54,7 @@
 </head>
 <body>
 	<header>
-		<h1 id="titulo">Portafolio - ${ cliente.getNombre() }</h1>
+		<h1 id="titulo">Portafolio - ${ cliente.getNombre() } - ${ cliente.getSaldo() }</h1>
 		<nav>
 			<ul>
 			  <li><a href="#">Inicio</a></li>
@@ -64,10 +65,10 @@
 			</ul>
 		</nav>
 		
-		<c:if test="${ confirmacion }">
-       		<p>${ producto }</p>
-       		<p>${ cantidad }</p>
-     	</c:if>
+<%-- 		<c:if test="${ confirmacion }"> --%>
+<%--        		<p>${ producto }</p> --%>
+<%--        		<p>${ cantidad }</p> --%>
+<%--      	</c:if> --%>
 		
 	</header>
 	
@@ -78,7 +79,7 @@
 		    <th>Mis Produtos</th>
 		    <th>Precio unitario</th>
 		  </tr>		  
-			<c:forEach var = "producto" items="${ listaProductos }">
+			<c:forEach var = "producto" items="${ productosCliente }">
 			  <tr>
 		        <td><c:out value = "${ producto.getCantidad() }"/></td>
 		        <td><c:out value = "${ producto.getNombre() }"/></td>
@@ -98,6 +99,7 @@
 	            <form action="ControladorTransaccion" method="post">
 	            	<input type="hidden" name="transaccion" value="venta">
 	            	<input type="hidden" name="id_cliente" value= ${ cliente.getId() }>
+	            	<input id="cantidadASetear" type="hidden" name="cantidadInicial">
 	            	<input id="producto" type="text"  name="nombre"><br>
 	            	<input id="precio" type="text" name="precio"><br>
 	            	<input id="cantidad" type="text" placeholder="Ingrese la cantidad" name="cantidad" onchange="calcular(this.value)" required><br>
@@ -129,17 +131,17 @@
 		
 		
 		
-	<section>
+<!-- 	<section> -->
 	
 		<%-- 		<c:if test="${ errorRegistro }"> --%>
 <!--        		<p class="error">Error de registro: Revise los datos ingresados</p> -->
 <%--      	</c:if> --%>
-		<h1>Portafolio - perfil ${ perfil }</h1>
-		<c:forEach var = "producto" items="${ listaProductos }">
-	         Producto: <c:out value = "${producto.getNombre() }"/><p>
-	         Precio: $<c:out value = "${producto.getPrecio() }"/><p>
-	         Cantidad: <c:out value = "${producto.getCantidad() }"/><p>
-      	</c:forEach>
-	</section>      
+<%-- 		<h1>Portafolio - perfil ${ perfil }</h1> --%>
+<%-- 		<c:forEach var = "producto" items="${ listaProductos }"> --%>
+<%-- 	         Producto: <c:out value = "${producto.getNombre() }"/><p> --%>
+<%-- 	         Precio: $<c:out value = "${producto.getPrecio() }"/><p> --%>
+<%-- 	         Cantidad: <c:out value = "${producto.getCantidad() }"/><p> --%>
+<%--       	</c:forEach> --%>
+<!-- 	</section>       -->
 </body>
 </html>

@@ -92,7 +92,7 @@ private ModeloTransaccion modeloTransaccion;
 			
 			//Enviar el objeto al modelo para que lo inserte en la BBDD
 			try {
-				modeloClientes.agregarNuevoCliente(cliente);
+				this.modeloClientes.agregarNuevoCliente(cliente);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

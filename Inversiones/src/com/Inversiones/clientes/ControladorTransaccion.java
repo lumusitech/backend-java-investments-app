@@ -20,7 +20,7 @@ import javax.sql.DataSource;
 @WebServlet("/ControladorTransaccion")
 public class ControladorTransaccion extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    private final int COMISION = 100;
+    private final Double COMISION = 100.00;
 	private ModeloClientes modeloClientes;
 	private ModeloTransaccion modeloTransaccion;
 	
@@ -85,6 +85,8 @@ public class ControladorTransaccion extends HttpServlet {
 		Double precio = producto.getPrecio();
 		producto.setCantidad(producto.getCantidad() + cantidad);
 		
+		System.out.println(producto);
+		
 		//Recibimos id del cliente desde el front
 		int id_cliente = Integer.parseInt(request.getParameter("id_cliente"));
 		Cliente cliente = this.modeloClientes.getCliente(id_cliente);
@@ -92,14 +94,17 @@ public class ControladorTransaccion extends HttpServlet {
 			Double total = ( cantidad * precio ) - COMISION;
 			cliente.setSaldo(cliente.getSaldo() + total);
 			
+			System.out.println(cliente);
+			
 			//Creamos la nueva transacción
 			String fecha = obtenerFechaActual();
 			TipoTransaccion tipo = TipoTransaccion.VENTA;
 			Transaccion transaccion = new Transaccion(fecha, cantidad, id_cliente, id_producto, total, tipo);
 			
+			System.out.println(transaccion);
+			
 			//Si la transacción se efectúa
 			if(this.modeloTransaccion.realizarTransaccionVenta(transaccion)) {
-				
 				//Actualizamos el saldo del cliente
 				this.modeloTransaccion.actualizarSaldo(cliente);
 				
@@ -107,13 +112,16 @@ public class ControladorTransaccion extends HttpServlet {
 				this.modeloTransaccion.actualizarCantidad(producto);
 				
 				//Registramos la comision
-				this.modeloTransaccion.registrarComision();
+				this.modeloTransaccion.registrarComision(transaccion.getId(), COMISION);
 				
 				//Actualizamos los productos del portafolio del cliente
-				this.modeloTransaccion.actualizarPortafolio(id_cliente, id_producto, cantidad);
+				int productosRestantes = Integer.parseInt(request.getParameter("cantidadInicial")) - cantidad;
+				
+				this.modeloTransaccion.actualizarPortafolio(id_cliente, id_producto, productosRestantes);
 				
 				//Obtenemos la lista de productos del portafolio del cliente
 				ArrayList<Producto> productosCliente = this.modeloTransaccion.getPortafolio(id_cliente);
+				request.setAttribute("cliente", cliente);
 				request.setAttribute("productosCliente", productosCliente);
 				request.setAttribute("error", false);
 				RequestDispatcher miDispatcher = request.getRequestDispatcher("/portafolio.jsp");
@@ -121,6 +129,7 @@ public class ControladorTransaccion extends HttpServlet {
 			
 			}else {
 				//Obtenemos la lista de productos del portafolio del cliente
+				request.setAttribute("cliente", cliente);
 				ArrayList<Producto> productosCliente = this.modeloTransaccion.getPortafolio(id_cliente);
 				request.setAttribute("productosCliente", productosCliente);
 				request.setAttribute("error", true);
@@ -129,6 +138,7 @@ public class ControladorTransaccion extends HttpServlet {
 			}
 		}else {
 			//Obtenemos la lista de productos del portafolio del cliente
+			request.setAttribute("cliente", cliente);
 			ArrayList<Producto> productosCliente = this.modeloTransaccion.getPortafolio(id_cliente);
 			request.setAttribute("productosCliente", productosCliente);
 			request.setAttribute("error", true);
