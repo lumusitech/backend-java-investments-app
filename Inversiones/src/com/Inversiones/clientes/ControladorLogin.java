@@ -71,7 +71,7 @@ private ModeloClientes modeloClientes;
 		}
 		
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	private void registrarCliente(HttpServletRequest request, HttpServletResponse response) throws Exception{
@@ -214,6 +214,8 @@ private ModeloClientes modeloClientes;
 						productosArriesgado.add(fondoModerado);
 						productosArriesgado.add(fondoArriesgado);
 						
+						request.setAttribute("cliente", cliente);
+						
 						switch (cliente.getPerfil()) {
 						case CONSERVADOR: request.setAttribute("listaProductos", productosConservador); break;
 						case MODERADO : request.setAttribute("listaProductos", productosModerado); break;
@@ -221,6 +223,7 @@ private ModeloClientes modeloClientes;
 						default : request.setAttribute("listaProductos", productosConservador);
 						}
 						
+						//Se envía el cliente y la lista que le corresponde según su perfil 
 						RequestDispatcher miDispatcher = request.getRequestDispatcher("/portafolio.jsp");
 						miDispatcher.forward(request, response);
 					}

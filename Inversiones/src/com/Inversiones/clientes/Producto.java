@@ -1,9 +1,25 @@
 package com.Inversiones.clientes;
 
 public class Producto {
+	private int id;
 	private int cantidad;
 	private String nombre;
 	private Double precio;
+	
+	public Producto(int cantidad, String nombre, Double precio) {
+		this.cantidad = cantidad;
+		this.nombre = nombre;
+		this.precio = precio;
+	}
+	
+	public Producto(int id, int cantidad, String nombre, Double precio) {
+		this.id = id;
+		this.cantidad = cantidad;
+		this.nombre = nombre;
+		this.precio = precio;
+	}
+	
+	//////////////////////////////////////////////////////////////////////////////
 	
 	public int getCantidad() {
 		return cantidad;
@@ -29,11 +45,12 @@ public class Producto {
 		this.precio = precio;
 	}
 	
-	public Producto(int cantidad, String nombre, Double precio) {
-		super();
-		this.cantidad = cantidad;
-		this.nombre = nombre;
-		this.precio = precio;
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 	
 	@Override

@@ -29,7 +29,7 @@
 		         <h3>Registro</h3>
 		         <input type="hidden" name="instruccion" value="registro">
 		         <input type="text" placeholder="Nombre de usuario" name="nombre">
-		         <input type="text" placeholder="Fecha de nacimiento" name="nac">
+		         <input type="date" placeholder="Fecha de nacimiento" name="nac">
 		         <input type="text" placeholder="email" name="email">
 		         <input type="text" placeholder="DNI" name="dni">		   
 		         <input type="password" placeholder="Contraseña" name="pass">

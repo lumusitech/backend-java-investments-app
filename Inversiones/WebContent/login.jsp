@@ -28,8 +28,8 @@
             	<form action="ControladorLogin" method="post">
 	                <h3>Login</h3>
 	                <input type="hidden" name="instruccion" value="login">
-	                <input type="text" placeholder="Nombre de usuario" name="nombre">
-	                <input type="password" placeholder="Contraseña" name="pass">
+	                <input type="text" placeholder="Nombre de usuario" name="nombre" required>
+	                <input type="password" placeholder="Contraseña" name="pass" required>
 	                <input type="submit" value="iniciar">
 	                <p class="msj">¿Aún no te has registrado? <a href="registro.jsp">Regístrate aquí</a></p>
                 	<c:if test="${ errorLogin }">
