@@ -1,6 +1,7 @@
 package com.Inversiones.clientes;
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class ModeloTransaccion {
 private DataSource origenDatos; 
@@ -40,7 +41,8 @@ private DataSource origenDatos;
 						miResultSet.getInt("id_producto"),
 						miResultSet.getInt("cantidad"), 
 						miResultSet.getString("nombre"),
-						miResultSet.getDouble("precio")
+						miResultSet.getDouble("precio"),
+						TipoProducto.valueOf(miResultSet.getString("tipo"))
 					);
 			} else {
 				throw new Exception("El producto no existe, revise sus credenciales o proceda a registrarse");
@@ -59,11 +61,62 @@ private DataSource origenDatos;
 	
 	//////////////////////////////////////////////////////////////////
 	
-	public boolean realizarTransaccion(String fecha, int cantidad, int id_cliente, String producto) throws Exception{
+	public boolean realizarTransaccionVenta(Transaccion transaccion) throws Exception{
 		
 		
 		
 		return true;
+	}
+	
+	//////////////////////////////////////////////////////////////////
+	
+	public boolean realizarTransaccionCompra(Transaccion transaccion) throws Exception{
+		
+		
+		
+		return true;
+	}
+	
+	//////////////////////////////////////////////////////////////////
+
+	public void actualizarSaldo(Cliente cliente) throws Exception{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	//////////////////////////////////////////////////////////////////
+
+	public void actualizarCantidad(Producto producto)  throws Exception{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	//////////////////////////////////////////////////////////////////
+
+	public void registrarComision() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	//////////////////////////////////////////////////////////////////
+	
+	public ArrayList<Producto> getPortafolio(int id_cliente) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	//////////////////////////////////////////////////////////////////
+
+	public void actualizarPortafolio(int id_cliente, int id_producto, int cantidad) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	//////////////////////////////////////////////////////////////////
+
+	public ArrayList<Producto> getProductos() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
 

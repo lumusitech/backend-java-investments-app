@@ -21,6 +21,7 @@ public class ControladorLogin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 private ModeloClientes modeloClientes;
+private ModeloTransaccion modeloTransaccion;
 	
 	@Resource(name="jdbc/Inversiones")
 	private DataSource miPool;
@@ -33,6 +34,7 @@ private ModeloClientes modeloClientes;
 		
 		try {
 			this.modeloClientes = new ModeloClientes(miPool);
+			this.modeloTransaccion = new ModeloTransaccion(miPool);
 		}catch(Exception e) {
 			throw new ServletException(e);
 		}
@@ -161,60 +163,30 @@ private ModeloClientes modeloClientes;
 						miDispatcher.forward(request, response);
 					}
 					else {
-						//Acciones
-						Producto alua = new Producto(150, "ALUA", 16.60);
-						Producto bma = new Producto(150, "BMA", 1297.65);
-						Producto byma = new Producto(150, "BYMA", 372.50);
-						Producto cepu = new Producto(150, "CEPU", 38.50);
-						Producto come = new Producto(150, "COME", 3.16);
 						
-						//Criptomonedas
-						Producto btc = new Producto(150, "BTC", 8536.00);
-						Producto eth = new Producto(150, "BMA", 256.78);
-						
-						//Fondos
-						Producto fondoConservador = new Producto(150, "Fondo conservador", 356.60);
-						Producto fondoModerado = new Producto(150, "Fondo moderado", 1297.65);
-						Producto fondoArriesgado = new Producto(150, "Fondo arriesgado", 5325.50);
+						request.setAttribute("cliente", cliente);
+						ArrayList<Producto> productos = this.modeloTransaccion.getProductos();
 						
 						List<Producto> productosConservador = new ArrayList<Producto>();
 						List<Producto> productosModerado = new ArrayList<Producto>();
 						List<Producto> productosArriesgado = new ArrayList<Producto>();
 						
-						//Conservador
-						productosConservador.add(alua);
-						productosConservador.add(bma);
-						productosConservador.add(byma);
-						productosConservador.add(cepu);
-						productosConservador.add(come);
-						productosConservador.add(btc);
-						productosConservador.add(eth);
-						productosConservador.add(fondoConservador);
-						
-						//Moderado
-						productosModerado.add(alua);
-						productosModerado.add(bma);
-						productosModerado.add(byma);
-						productosModerado.add(cepu);
-						productosModerado.add(come);
-						productosModerado.add(btc);
-						productosModerado.add(eth);
-						productosModerado.add(fondoConservador);
-						productosModerado.add(fondoModerado);
-						
-						//Arriesgado
-						productosArriesgado.add(alua);
-						productosArriesgado.add(bma);
-						productosArriesgado.add(byma);
-						productosArriesgado.add(cepu);
-						productosArriesgado.add(come);
-						productosArriesgado.add(btc);
-						productosArriesgado.add(eth);
-						productosArriesgado.add(fondoConservador);
-						productosArriesgado.add(fondoModerado);
-						productosArriesgado.add(fondoArriesgado);
-						
-						request.setAttribute("cliente", cliente);
+						for(Producto producto : productos) {
+							if(producto.getTipo() == TipoProducto.ACCIONES
+							|| producto.getTipo() == TipoProducto.FONDO_CONSERVADOR) {
+								productosConservador.add(producto);
+								productosModerado.add(producto);
+								productosArriesgado.add(producto);
+							}
+							if(producto.getTipo() == TipoProducto.FONDO_MODERADO) {
+								productosModerado.add(producto);
+								productosArriesgado.add(producto);
+							}
+							if(producto.getTipo() == TipoProducto.CRIPTOMONEDA
+							|| producto.getTipo() == TipoProducto.FONDO_ARRIESGADO) {
+								productosArriesgado.add(producto);
+							}
+						}
 						
 						switch (cliente.getPerfil()) {
 						case CONSERVADOR: request.setAttribute("listaProductos", productosConservador); break;
@@ -223,7 +195,9 @@ private ModeloClientes modeloClientes;
 						default : request.setAttribute("listaProductos", productosConservador);
 						}
 						
-						//Se envía el cliente y la lista que le corresponde según su perfil 
+						//Se envía el cliente y la lista que le corresponde según su perfil
+						ArrayList<Producto> productosCliente = this.modeloTransaccion.getPortafolio(cliente.getId());
+						request.setAttribute("productosCliente", productosCliente);
 						RequestDispatcher miDispatcher = request.getRequestDispatcher("/portafolio.jsp");
 						miDispatcher.forward(request, response);
 					}

@@ -1,6 +1,9 @@
 package com.Inversiones.clientes;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 import javax.annotation.Resource;
 import javax.servlet.RequestDispatcher;
@@ -17,7 +20,7 @@ import javax.sql.DataSource;
 @WebServlet("/ControladorTransaccion")
 public class ControladorTransaccion extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+    private final int COMISION = 100;
 	private ModeloClientes modeloClientes;
 	private ModeloTransaccion modeloTransaccion;
 	
@@ -74,18 +77,72 @@ public class ControladorTransaccion extends HttpServlet {
 
 	private void venta(HttpServletRequest request, HttpServletResponse response)  throws Exception{
 		
-		//Recibimos datos del producto
+		//Recibimos datos del producto desde el front
 		int cantidad = Integer.parseInt(request.getParameter("cantidad"));
 		String nombreProducto = request.getParameter("nombre");
+		Producto producto = this.modeloTransaccion.getProducto(nombreProducto);
+		int id_producto = producto.getId();
+		Double precio = producto.getPrecio();
+		producto.setCantidad(producto.getCantidad() + cantidad);
 		
-		//Recibimos id del cliente
+		//Recibimos id del cliente desde el front
 		int id_cliente = Integer.parseInt(request.getParameter("id_cliente"));
-		
-		if(this.modeloTransaccion.realizarTransaccion("", cantidad, id_cliente, nombreProducto)) {
+		Cliente cliente = this.modeloClientes.getCliente(id_cliente);
+		if( (( cantidad * precio ) - COMISION) >= 0 ) {
+			Double total = ( cantidad * precio ) - COMISION;
+			cliente.setSaldo(cliente.getSaldo() + total);
 			
+			//Creamos la nueva transacción
+			String fecha = obtenerFechaActual();
+			TipoTransaccion tipo = TipoTransaccion.VENTA;
+			Transaccion transaccion = new Transaccion(fecha, cantidad, id_cliente, id_producto, total, tipo);
+			
+			//Si la transacción se efectúa
+			if(this.modeloTransaccion.realizarTransaccionVenta(transaccion)) {
+				
+				//Actualizamos el saldo del cliente
+				this.modeloTransaccion.actualizarSaldo(cliente);
+				
+				//Actualizamos la cantidad del producto
+				this.modeloTransaccion.actualizarCantidad(producto);
+				
+				//Registramos la comision
+				this.modeloTransaccion.registrarComision();
+				
+				//Actualizamos los productos del portafolio del cliente
+				this.modeloTransaccion.actualizarPortafolio(id_cliente, id_producto, cantidad);
+				
+				//Obtenemos la lista de productos del portafolio del cliente
+				ArrayList<Producto> productosCliente = this.modeloTransaccion.getPortafolio(id_cliente);
+				request.setAttribute("productosCliente", productosCliente);
+				request.setAttribute("error", false);
+				RequestDispatcher miDispatcher = request.getRequestDispatcher("/portafolio.jsp");
+				miDispatcher.forward(request, response);
+			
+			}else {
+				//Obtenemos la lista de productos del portafolio del cliente
+				ArrayList<Producto> productosCliente = this.modeloTransaccion.getPortafolio(id_cliente);
+				request.setAttribute("productosCliente", productosCliente);
+				request.setAttribute("error", true);
+				RequestDispatcher miDispatcher = request.getRequestDispatcher("/portafolio.jsp");
+				miDispatcher.forward(request, response);
+			}
+		}else {
+			//Obtenemos la lista de productos del portafolio del cliente
+			ArrayList<Producto> productosCliente = this.modeloTransaccion.getPortafolio(id_cliente);
+			request.setAttribute("productosCliente", productosCliente);
+			request.setAttribute("error", true);
+			RequestDispatcher miDispatcher = request.getRequestDispatcher("/portafolio.jsp");
+			miDispatcher.forward(request, response);
 		}
-		
-		boolean confirmacion = true;
-			
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public static String obtenerFechaActual() {
+		String formato = "yyyy-MM-dd"; //"yyyy-MM-dd HH:mm:ss" <-- Es la forma más completa
+		DateTimeFormatter formateador = DateTimeFormatter.ofPattern(formato);
+		LocalDateTime ahora = LocalDateTime.now();
+		return formateador.format(ahora);
 	}
 }
