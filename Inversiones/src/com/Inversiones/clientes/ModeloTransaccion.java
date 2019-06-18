@@ -61,6 +61,55 @@ private DataSource origenDatos;
 	
 	//////////////////////////////////////////////////////////////////
 	
+	public Producto getProducto(int id_prod) throws Exception{
+		Producto p = null;
+		
+		Connection miConexion = null;
+		PreparedStatement miStatement = null;
+		ResultSet miResultSet = null;
+		
+		try {
+			// Establecer la conexión
+			miConexion = origenDatos.getConnection();
+			
+			//Crear SQL para buscar el Cliente con el id pasado
+			String SQL = "SELECT * FROM producto_inversion WHERE id_producto=?";
+			
+			//Crear la consulta preparada
+			miStatement = miConexion.prepareStatement(SQL);
+			
+			//Establecer los parámetros
+			miStatement.setInt(1, id_prod);
+			
+			//Ejecutar la consulta
+			miResultSet = miStatement.executeQuery();
+			
+			//Obtener los datos de respuesta
+			if(miResultSet.next()) {
+				p = new Producto(
+						miResultSet.getInt("id_producto"),
+						miResultSet.getInt("cantidad"), 
+						miResultSet.getString("nombre"),
+						miResultSet.getDouble("precio"),
+						TipoProducto.valueOf(miResultSet.getString("tipo"))
+					);
+			} else {
+				throw new Exception("El producto no existe, revise sus credenciales o proceda a registrarse");
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}finally {
+			miStatement.close();
+			miConexion.close();
+		}
+		
+		return p;
+		
+	}
+	
+	//////////////////////////////////////////////////////////////////
+	
 	public int realizarTransaccionVenta(Transaccion transaccion) throws Exception{
 		int idGenerado = 0;
 		Connection miConexion = null;
@@ -105,11 +154,46 @@ private DataSource origenDatos;
 	
 	//////////////////////////////////////////////////////////////////
 	
-	public boolean realizarTransaccionCompra(Transaccion transaccion) throws Exception{
-		
-		
-		
-		return true;
+	public int realizarTransaccionCompra(Transaccion transaccion) throws Exception{
+		int idGenerado = 0;
+		Connection miConexion = null;
+		PreparedStatement miStatement = null;
+
+		try {
+			//Obtener la conexión
+			miConexion = origenDatos.getConnection();
+			
+			//Crear la instrucción SQL que inserte el Cliente (Statement)
+			String SQL = "INSERT INTO transaccion(fecha, cantidad_producto, id_cliente, id_producto, precio, tipo) VALUES(?,?,?,?,?,?);";
+			miStatement = miConexion.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
+			
+			//Establecer los parámetros para el Cliente
+			miStatement.setString(1, transaccion.getFecha());
+			miStatement.setInt(2, transaccion.getCantidad());
+			miStatement.setInt(3, transaccion.getId_cliente());
+			miStatement.setInt(4, transaccion.getId_producto());
+			miStatement.setDouble(5, transaccion.getTotal());
+			miStatement.setString(6, transaccion.getTipo().toString());
+			
+
+			int affectedRows = miStatement.executeUpdate();
+			if (affectedRows == 0) {
+			        throw new SQLException("No se pudo guardar");
+			}
+
+			ResultSet generatedKeys = miStatement.getGeneratedKeys();
+			if (generatedKeys.next()) {
+			         idGenerado = generatedKeys.getInt(1);
+			}
+			
+		} catch (Exception e) {
+			System.out.println(e);
+			// TODO: handle exception
+		}finally {
+			miStatement.close();
+			miConexion.close();
+		}
+		return idGenerado;
 	}
 	
 	//////////////////////////////////////////////////////////////////
@@ -147,16 +231,13 @@ private DataSource origenDatos;
 		Connection miConexion = null;
 		PreparedStatement miStatement = null;
 		
-		System.out.println(producto.getCantidad());
-		
 		try {			
 			//Obtener la conexión
 			miConexion = origenDatos.getConnection();
-
+			
 			//Crear la instrucción SQL que actualiza la cantidad de los productos (Statement)
 			String SQL = "UPDATE producto_inversion SET cantidad=? WHERE id_producto=?";
-			miStatement = miConexion.prepareStatement(SQL);
-
+			miStatement = miConexion.prepareStatement(SQL); 
 			//Establecer los parámetros para el Cliente
 			miStatement.setDouble(1, producto.getCantidad());
 			miStatement.setInt(2, producto.getId());
@@ -263,34 +344,113 @@ private DataSource origenDatos;
 	
 	//////////////////////////////////////////////////////////////////
 
-	public void actualizarPortafolio(int id_cliente, int id_producto, int cantidad) throws Exception{
+	public void actualizarPortafolioCompra(int id_cl, int id_prod, int cantidad) throws Exception{
 		
 		Connection miConexion = null;
 		PreparedStatement miStatement = null;
 		
+		Double precio = getProducto(id_prod).getPrecio();
+		int cantidadActualizada = 0;
+		
+		boolean insert = false;
+		ArrayList<Producto> portafolio = getPortafolio(id_cl);
+		
+		if(portafolio.size() == 0) {
+			insert = true;
+			cantidadActualizada = cantidad;
+		}else {
+			for(Producto pf : portafolio) {
+				if(pf.getId() != id_prod) {
+					insert = true;//Si no tengo a ese producto en el portafolio, haré un insert
+					cantidadActualizada = cantidad;
+				}else {
+					insert = false;
+					cantidadActualizada = pf.getCantidad() + cantidad;
+				}
+			}//else: no será un insert porque ya lo tenía, haré un update
+		}
+
 		try {			
 			//Obtener la conexión
 			miConexion = origenDatos.getConnection();
-
+			
 			//Crear la instrucción SQL que inserte el Cliente (Statement)
-			String SQL = "UPDATE portafolio SET cantidad_producto=? WHERE id_producto=? AND id_cliente=?";
-			miStatement = miConexion.prepareStatement(SQL);
+			String SQL;
+			if(insert) {
+				System.out.println("\n\nSe procede a insertar el producto al portafolio");
+				SQL = "INSERT INTO portafolio(id_cliente, id_producto, cantidad_producto, precio) VALUES(?,?,?,?)";
+				miStatement = miConexion.prepareStatement(SQL);
 
-			//Establecer los parámetros para el Cliente
-			miStatement.setInt(1, cantidad);
-			miStatement.setInt(2, id_producto);
-			miStatement.setInt(3, id_cliente);
+				//Establecer los parámetros para el Cliente
+				miStatement.setInt(1, id_cl);
+				miStatement.setInt(2, id_prod);
+				miStatement.setInt(3, cantidadActualizada);
+				miStatement.setDouble(4, precio);
+			}else {
+				SQL = "UPDATE portafolio SET cantidad_producto=? WHERE id_producto=? AND id_cliente=?";
+				miStatement = miConexion.prepareStatement(SQL);
+
+				//Establecer los parámetros para el Cliente
+				miStatement.setInt(1, cantidadActualizada);
+				miStatement.setInt(2, id_prod);
+				miStatement.setInt(3, id_cl);
+			}
 
 			//Ejecutar la instrucción SQL
 			miStatement.executeUpdate();
 			
 		} catch (Exception e) {
-			// TODO: handle exception
+			System.out.println(e);
 		}finally {
 			miStatement.close();
 			miConexion.close();
 		}	
 	}
+	
+//////////////////////////////////////////////////////////////////
+
+public void actualizarPortafolioVenta(int id_cl, int id_prod, int cantidadRestante) throws Exception{
+
+	Connection miConexion = null;
+	PreparedStatement miStatement = null;
+	boolean delete = false;
+	
+	if(cantidadRestante == 0) delete = true;
+	
+	try {			
+		//Obtener la conexión
+		miConexion = origenDatos.getConnection();
+		
+		if(delete) {
+			//Crear la instrucción SQL que borre el producto (Statement)
+			String SQL = "DELETE FROM portafolio WHERE id_producto=? AND id_cliente=?";
+			miStatement = miConexion.prepareStatement(SQL);
+			
+			//Establecer los parámetros para el Cliente
+			miStatement.setInt(1, id_prod);
+			miStatement.setInt(2, id_cl);
+		}else {
+			//Crear la instrucción SQL que inserte el Cliente (Statement)
+			String SQL = "UPDATE portafolio SET cantidad_producto=? WHERE id_producto=? AND id_cliente=?";
+			miStatement = miConexion.prepareStatement(SQL);
+			
+			//Establecer los parámetros para el Cliente
+			miStatement.setInt(1, cantidadRestante);
+			miStatement.setInt(2, id_prod);
+			miStatement.setInt(3, id_cl);
+		}
+		
+		
+		//Ejecutar la instrucción SQL
+		miStatement.executeUpdate();
+	
+	} catch (Exception e) {
+		// TODO: handle exception
+	}finally {
+		miStatement.close();
+		miConexion.close();
+	}	
+}
 	
 	//////////////////////////////////////////////////////////////////
 

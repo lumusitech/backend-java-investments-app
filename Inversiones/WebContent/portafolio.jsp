@@ -10,6 +10,8 @@
 <!-- Con esto tendría etiquetas de funciones predefinidas: split contains join etc. -->   
  <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
  
+ <!----------------------------------------------------------------------------------------------------->
+ 
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,8 +21,44 @@
 
 <title>Portafolio</title>
 
+<!----------------------------------------------------------------------------------------------------->
+
 <script>
-	function recuperarDatos(cantidad, nombre, precio){
+	
+	var tipoDeCalculo = "";
+	
+	function escribir(operacion){
+		document.getElementById("tituloModal").innerHTML=operacion;
+	}
+
+	function recuperarDatosVenta(cantidad, nombre, precio){
+	
+		escribir("Venta");
+		tipoDeCalculo = "venta"
+		document.getElementById("tipo").value = "venta";
+		
+		var prod = nombre;
+		var cant = cantidad;
+		var prec = precio;
+		
+		document.getElementById("cantidadASetear").value = cant;
+		
+		document.getElementById("producto").value = prod;
+		document.getElementById("cantidad").value = cant;
+		document.getElementById("precio").value = prec;
+		
+		var total = (prec * cant) - 100;
+		
+		document.getElementById("total").value = total.toFixed(2);
+		
+	}
+	
+	function recuperarDatosCompra(cantidad, nombre, precio){
+		
+		escribir("Compra");
+		tipoDeCalculo = "compra"
+		document.getElementById("tipo").value = "compra";
+		
 		var prod = nombre;
 		var cant = cantidad;
 		var prec = precio;
@@ -38,6 +76,29 @@
 	}
 	
 	function calcular(cantidad){
+		if(tipoDeCalculo == "compra"){
+			calcularCompra(cantidad)
+		}else{
+			calcularVenta(cantidad)
+		}
+	}
+	
+	function calcularCompra(cantidad){
+		
+		var precio = document.getElementById("precio").value;
+		var total = 0;	
+		var comision = 100;
+		
+		precio = parseFloat(precio);
+		cantidad = parseFloat(cantidad);
+		
+		total = (cantidad * precio) + 100;
+		
+		document.getElementById('total').value = total.toFixed(2);
+	}
+	
+	function calcularVenta(cantidad){
+		
 		var precio = document.getElementById("precio").value;
 		var total = 0;	
 		var comision = 100;
@@ -49,99 +110,148 @@
 		
 		document.getElementById('total').value = total.toFixed(2);
 	}
+	
+	
 </script>
 
 </head>
+
+<!----------------------------------------------------------------------------------------------------->
+
 <body>
 	<header>
-		<h1 id="titulo">Portafolio - ${ cliente.getNombre() } - ${ cliente.getSaldo() }</h1>
+		<h1 id="titulo">Portafolio - ${ cliente.getNombre() } - $${ cliente.getSaldo() }</h1>
 		<nav>
 			<ul>
 			  <li><a href="#">Inicio</a></li>
 			  <li><a href="#">Transferencias</a></li>
 			  <li><a href="consulta.jsp">Consultas</a></li>
 			  <li><a href="#">Acerca de</a></li>
-			  <li><a href="#">Salir</a></li>
+			  <li><a href="login.jsp">Salir</a></li>
 			</ul>
 		</nav>
 		
-<%-- 		<c:if test="${ confirmacion }"> --%>
-<%--        		<p>${ producto }</p> --%>
-<%--        		<p>${ cantidad }</p> --%>
-<%--      	</c:if> --%>
+		<c:if test="${ errorSaldo }">
+			<h2 id="error">La operación no puede efectuarse por saldo insuficiente</h2>	 
+     	</c:if>
+     	
+     	<c:if test="${ errorCantidad }">
+			<h2 id="error">La operación no puede efectuarse por cantidad de productos insuficiente</h2>	 
+     	</c:if>
+		
+
+<!----------------------------------------------------------------------------------------------------->
 		
 	</header>
-	
+
 	<section>
-		<table border="1">
+		<h2>Mis productos</h2>
+		<table class="tabla">
 		  <tr>
 		    <th>Cantidad</th>
-		    <th>Mis Produtos</th>
+		    <th>Mis productos</th>
 		    <th>Precio unitario</th>
 		  </tr>		  
 			<c:forEach var = "producto" items="${ productosCliente }">
-			  <tr>
-		        <td><c:out value = "${ producto.getCantidad() }"/></td>
-		        <td><c:out value = "${ producto.getNombre() }"/></td>
-		        <td><c:out value = "${ producto.getPrecio() }"/></td>
-		        <td>
-			        <a href="#openModal" onclick="recuperarDatos(${ producto.getCantidad() },
-			        '${ producto.getNombre() }', ${ producto.getPrecio() } 	)">Vender</a>
-		        </td>		        
-		      </tr> 		   
+				
+	       		<tr>
+			        <td><c:out value = "${ producto.getCantidad() }"/></td>
+			        <td><c:out value = "${ producto.getNombre() }"/></td>
+			        <td><c:out value = "${ producto.getPrecio() }"/></td>
+			        <td>
+				        <a href="#openModal" onclick="recuperarDatosVenta(${ producto.getCantidad() },
+				        '${ producto.getNombre() }', ${ producto.getPrecio() } 	)">Vender</a>
+			        </td>		        
+	     		 </tr> 
+			  		   
 	      	</c:forEach> 
 		</table>
-		
-		<div id="openModal" class="modalDialog">
+   			 
+	</section>
+	
+<!----------------------------------------------------------------------------------------------------->
+	
+	<section>
+		<h2>Acciones / Bonos / Criptomonedas</h2>
+		<table class="tabla">
+		  <tr>
+		    <th>Cantidad</th>
+		    <th>Productos</th>
+		    <th>Precio unitario</th>
+		  </tr>		  
+			<c:forEach var = "producto" items="${ listaProductos }">
+				<c:if test="${ producto.getNombre() != 'Fondo conservador'
+				 && producto.getNombre() != 'Fondo moderado' 
+				 && producto.getNombre() != 'Fondo arriesgado'
+				 && producto.getCantidad() > 0}">
+		       		<tr>
+				        <td><c:out value = "${ producto.getCantidad() }"/></td>
+				        <td><c:out value = "${ producto.getNombre() }"/></td>
+				        <td><c:out value = "${ producto.getPrecio() }"/></td>
+				        <td>
+					        <a href="#openModal" onclick="recuperarDatosCompra(${ producto.getCantidad() },
+					        '${ producto.getNombre() }', ${ producto.getPrecio() } 	)">Comprar</a>
+				        </td>		        
+		     		 </tr> 
+     			</c:if>
+			  		   
+	      	</c:forEach> 
+		</table>
+   			 
+	</section>
+	
+<!----------------------------------------------------------------------------------------------------->
+	
+	<section>
+		<h2>Fondos de inversión</h2>
+		<table class="tabla">
+		  <tr>
+		    <th>Cantidad</th>
+		    <th>Mis Productos</th>
+		    <th>Precio unitario</th>
+		  </tr>		  
+			<c:forEach var = "producto" items="${ listaProductos }">
+			  <c:if test="${ producto.getNombre() == 'Fondo conservador'
+				 || producto.getNombre() == 'Fondo moderado' 
+				 || producto.getNombre() == 'Fondo arriesgado'
+				 && producto.getCantidad() > 0}">
+		       		<tr>
+				        <td><c:out value = "${ producto.getCantidad() }"/></td>
+				        <td><c:out value = "${ producto.getNombre() }"/></td>
+				        <td><c:out value = "${ producto.getPrecio() }"/></td>
+				        <td>
+					        <a href="#openModal" onclick="recuperarDatosCompra(${ producto.getCantidad() },
+					        '${ producto.getNombre() }', ${ producto.getPrecio() } 	)">Comprar</a>
+				        </td>		        
+		     		 </tr> 
+     			</c:if>	   
+	      	</c:forEach> 
+		</table>
+   			 
+	</section>
+	
+<!----------------------------------------------------------------------------------------------------->
+	
+<!--------------------------------------Ventana modal-------------------------------------------------->
+	
+	<div id="openModal" class="modalDialog">
        		<div>
 	            <a href="#close" title="Close" class="close">X</a>
-	            <h2>Venta</h2>
-	            <form action="ControladorTransaccion" method="post">
-	            	<input type="hidden" name="transaccion" value="venta">
+	            <h3 id="tituloModal"></h3>
+	            <form id="miForm" action="ControladorTransaccion" method="post">
+	            	<input id="tipo" type="hidden" name="transaccion">
 	            	<input type="hidden" name="id_cliente" value= ${ cliente.getId() }>
 	            	<input id="cantidadASetear" type="hidden" name="cantidadInicial">
 	            	<input id="producto" type="text"  name="nombre"><br>
 	            	<input id="precio" type="text" name="precio"><br>
 	            	<input id="cantidad" type="text" placeholder="Ingrese la cantidad" name="cantidad" onchange="calcular(this.value)" required><br>
 	            	<input id="total" type="text" placeholder="Total" name="total"><br>
-	            	<input type=submit value="Vender">
+	            	<input type="submit" value="Confirmar">
 	            </form>
        		</div>
    		</div>
-   			 
-	</section>
+   		
+<!----------------------------------------------------------------------------------------------------->
 		
-		
-
-    
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-<!-- 	<section> -->
-	
-		<%-- 		<c:if test="${ errorRegistro }"> --%>
-<!--        		<p class="error">Error de registro: Revise los datos ingresados</p> -->
-<%--      	</c:if> --%>
-<%-- 		<h1>Portafolio - perfil ${ perfil }</h1> --%>
-<%-- 		<c:forEach var = "producto" items="${ listaProductos }"> --%>
-<%-- 	         Producto: <c:out value = "${producto.getNombre() }"/><p> --%>
-<%-- 	         Precio: $<c:out value = "${producto.getPrecio() }"/><p> --%>
-<%-- 	         Cantidad: <c:out value = "${producto.getCantidad() }"/><p> --%>
-<%--       	</c:forEach> --%>
-<!-- 	</section>       -->
 </body>
 </html>

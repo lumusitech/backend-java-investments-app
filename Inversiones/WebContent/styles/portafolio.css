@@ -9,7 +9,7 @@
 }
 
 body{
-    background-image: url('../img/fondoLogin.png');
+    background-image: url('../img/fondo.png');
     color: white;
 }
 
@@ -19,9 +19,12 @@ header{
 	text-shadow: 1px 1px 5px rgba(0,0,0,0.8);
 }
 
+header h1{
+	margin-top: 30px;
+}
+
 nav{
 	text-align: center;
-	margin: auto;
 	border: 1px solid white;
 	margin: 0 auto; 
 	display: inline-block;
@@ -43,6 +46,28 @@ nav a{
 
 nav a:hover{
 	text-shadow: 0 0 5px white;
+}
+
+section{
+	margin: 80px;
+}
+
+section h2{
+	margin-bottom: 20px;
+}
+
+.tabla{
+	border: 1px solid white;
+}
+
+.tabla th{
+	border: 1px solid white;
+	padding: 5px;
+}
+
+.tabla td{
+	border: 1px solid white;
+	padding: 5px;
 }
 
 /********************************************************************************/

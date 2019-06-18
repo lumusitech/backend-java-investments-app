@@ -83,7 +83,7 @@ private ModeloTransaccion modeloTransaccion;
 		String nac = request.getParameter("nac");
 		String email = request.getParameter("email");
 		String dni = request.getParameter("dni");
-		Double saldo = 135265.50;
+		Double saldo = 15000.50;
 		
 		if(!nombre.equals("") && !pass.equals("") && !nac.equals("") && !email.equals("") && !dni.equals("")) {//Comprobar lo que se necesite
 			//Crear un objeto de tipo Cliente
@@ -163,37 +163,10 @@ private ModeloTransaccion modeloTransaccion;
 						miDispatcher.forward(request, response);
 					}
 					else {
-						
+						//Mandamos al cliente
 						request.setAttribute("cliente", cliente);
-						ArrayList<Producto> productos = this.modeloTransaccion.getProductos();
-						
-						List<Producto> productosConservador = new ArrayList<Producto>();
-						List<Producto> productosModerado = new ArrayList<Producto>();
-						List<Producto> productosArriesgado = new ArrayList<Producto>();
-						
-						for(Producto producto : productos) {
-							if(producto.getTipo() == TipoProducto.ACCIONES
-							|| producto.getTipo() == TipoProducto.FONDO_CONSERVADOR) {
-								productosConservador.add(producto);
-								productosModerado.add(producto);
-								productosArriesgado.add(producto);
-							}
-							if(producto.getTipo() == TipoProducto.FONDO_MODERADO) {
-								productosModerado.add(producto);
-								productosArriesgado.add(producto);
-							}
-							if(producto.getTipo() == TipoProducto.CRIPTOMONEDA
-							|| producto.getTipo() == TipoProducto.FONDO_ARRIESGADO) {
-								productosArriesgado.add(producto);
-							}
-						}
-						
-						switch (cliente.getPerfil()) {
-						case CONSERVADOR: request.setAttribute("listaProductos", productosConservador); break;
-						case MODERADO : request.setAttribute("listaProductos", productosModerado); break;
-						case ARRIESGADO : request.setAttribute("listaProductos", productosArriesgado); break;
-						default : request.setAttribute("listaProductos", productosConservador);
-						}
+						//Mandamoslos productos ofrecidos
+						obtenerProductos(request, cliente);
 						
 						//Se envía el cliente y la lista que le corresponde según su perfil
 						ArrayList<Producto> productosCliente = this.modeloTransaccion.getPortafolio(cliente.getId());
@@ -213,6 +186,40 @@ private ModeloTransaccion modeloTransaccion;
 				RequestDispatcher miDispatcher = request.getRequestDispatcher("/login.jsp");
 				miDispatcher.forward(request, response);
 			}
+		}
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////
+
+	private void obtenerProductos(HttpServletRequest request, Cliente cliente) throws Exception {
+		ArrayList<Producto> productos = this.modeloTransaccion.getProductos();
+		
+		List<Producto> productosConservador = new ArrayList<Producto>();
+		List<Producto> productosModerado = new ArrayList<Producto>();
+		List<Producto> productosArriesgado = new ArrayList<Producto>();
+		
+		for(Producto producto : productos) {
+			if(producto.getTipo() == TipoProducto.ACCIONES
+			|| producto.getTipo() == TipoProducto.FONDO_CONSERVADOR) {
+				productosConservador.add(producto);
+				productosModerado.add(producto);
+				productosArriesgado.add(producto);
+			}
+			if(producto.getTipo() == TipoProducto.FONDO_MODERADO) {
+				productosModerado.add(producto);
+				productosArriesgado.add(producto);
+			}
+			if(producto.getTipo() == TipoProducto.CRIPTOMONEDA
+			|| producto.getTipo() == TipoProducto.FONDO_ARRIESGADO) {
+				productosArriesgado.add(producto);
+			}
+		}
+		
+		switch (cliente.getPerfil()) {
+		case CONSERVADOR: request.setAttribute("listaProductos", productosConservador); break;
+		case MODERADO : request.setAttribute("listaProductos", productosModerado); break;
+		case ARRIESGADO : request.setAttribute("listaProductos", productosArriesgado); break;
+		default : request.setAttribute("listaProductos", productosConservador);
 		}
 	}
 }
