@@ -19,7 +19,7 @@
 
 <link rel="stylesheet" href="styles/consulta.css">
 
-<title>Consulta</title>
+<title>Acerca de</title>
 
 <script>
 
@@ -35,7 +35,7 @@ function redireccionar(direccionRecibida){
 <!----------------------------------------------------------------------------------------------------->
 <body>
 	<header>
-		<h1 id="titulo">Consultas - ${ cliente.getNombre() }</h1>
+		<h1 id="titulo">Acerca de la Empresa - ${ cliente.getNombre() }</h1>
 		<nav>
 			<ul>
 			  <li><a href="javascript:redireccionar('portafolio.jsp');">Inicio</a></li>
@@ -81,6 +81,7 @@ function redireccionar(direccionRecibida){
 		<input id="direccion" type="hidden" name="direccion" value="">
 		<input id="id_cliente" type="hidden" name="id_cliente" value="${ cliente.getId() }" >
 	</form>
+	
 	
 </body>
 </html>

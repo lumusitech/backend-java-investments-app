@@ -25,91 +25,100 @@
 
 <script>
 	
-	var tipoDeCalculo = "";
+var tipoDeCalculo = "";
 	
-	function escribir(operacion){
-		document.getElementById("tituloModal").innerHTML=operacion;
-	}
 
-	function recuperarDatosVenta(cantidad, nombre, precio){
+function escribir(operacion){
+	document.getElementById("tituloModal").innerHTML=operacion;
+}
+
+function recuperarDatosVenta(cantidad, nombre, precio){
 	
-		escribir("Venta");
-		tipoDeCalculo = "venta"
-		document.getElementById("tipo").value = "venta";
-		
-		var prod = nombre;
-		var cant = cantidad;
-		var prec = precio;
-		
-		document.getElementById("cantidadASetear").value = cant;
-		
-		document.getElementById("producto").value = prod;
-		document.getElementById("cantidad").value = cant;
-		document.getElementById("precio").value = prec;
-		
-		var total = (prec * cant) - 100;
-		
-		document.getElementById("total").value = total.toFixed(2);
-		
-	}
+	escribir("Venta");
+	tipoDeCalculo = "venta"
+	document.getElementById("tipo").value = "venta";
 	
-	function recuperarDatosCompra(cantidad, nombre, precio){
-		
-		escribir("Compra");
-		tipoDeCalculo = "compra"
-		document.getElementById("tipo").value = "compra";
-		
-		var prod = nombre;
-		var cant = cantidad;
-		var prec = precio;
-		
-		document.getElementById("cantidadASetear").value = cant;
-		
-		document.getElementById("producto").value = prod;
-		document.getElementById("cantidad").value = cant;
-		document.getElementById("precio").value = prec;
-		
-		var total = (prec * cant) - 100;
-		
-		document.getElementById("total").value = total.toFixed(2);
-		
-	}
+	var prod = nombre;
+	var cant = cantidad;
+	var prec = precio;
 	
-	function calcular(cantidad){
-		if(tipoDeCalculo == "compra"){
-			calcularCompra(cantidad)
-		}else{
-			calcularVenta(cantidad)
-		}
-	}
+	document.getElementById("cantidadASetear").value = cant;
 	
-	function calcularCompra(cantidad){
-		
-		var precio = document.getElementById("precio").value;
-		var total = 0;	
-		var comision = 100;
-		
-		precio = parseFloat(precio);
-		cantidad = parseFloat(cantidad);
-		
-		total = (cantidad * precio) + 100;
-		
-		document.getElementById('total').value = total.toFixed(2);
-	}
+	document.getElementById("producto").value = prod;
+	document.getElementById("cantidad").value = cant;
+	document.getElementById("precio").value = prec;
 	
-	function calcularVenta(cantidad){
-		
-		var precio = document.getElementById("precio").value;
-		var total = 0;	
-		var comision = 100;
-		
-		precio = parseFloat(precio);
-		cantidad = parseFloat(cantidad);
-		
-		total = (cantidad * precio) - 100;
-		
-		document.getElementById('total').value = total.toFixed(2);
+	var total = (prec * cant) - 100;
+	
+	document.getElementById("total").value = total.toFixed(2);
+	
+}
+
+function recuperarDatosCompra(cantidad, nombre, precio){
+	
+	escribir("Compra");
+	tipoDeCalculo = "compra"
+	document.getElementById("tipo").value = "compra";
+	
+	var prod = nombre;
+	var cant = cantidad;
+	var prec = precio;
+	
+	document.getElementById("cantidadASetear").value = cant;
+	
+	document.getElementById("producto").value = prod;
+	document.getElementById("cantidad").value = cant;
+	document.getElementById("precio").value = prec;
+	
+	var total = (prec * cant) - 100;
+	
+	document.getElementById("total").value = total.toFixed(2);
+	
+}
+
+function calcular(cantidad){
+	if(tipoDeCalculo == "compra"){
+		calcularCompra(cantidad)
+	}else{
+		calcularVenta(cantidad)
 	}
+}
+
+function calcularCompra(cantidad){
+	
+	var precio = document.getElementById("precio").value;
+	var total = 0;	
+	var comision = 100;
+	
+	precio = parseFloat(precio);
+	cantidad = parseFloat(cantidad);
+	
+	total = (cantidad * precio) + 100;
+	
+	document.getElementById('total').value = total.toFixed(2);
+}
+
+function calcularVenta(cantidad){
+	
+	var precio = document.getElementById("precio").value;
+	var total = 0;	
+	var comision = 100;
+	
+	precio = parseFloat(precio);
+	cantidad = parseFloat(cantidad);
+	
+	total = (cantidad * precio) - 100;
+	
+	document.getElementById('total').value = total.toFixed(2);
+}
+
+function redireccionar(direccionRecibida){
+	
+	document.getElementById("direccion").value = direccionRecibida;
+	
+	document.forma.submit();
+}
+	
 	
 	
 </script>
@@ -123,11 +132,11 @@
 		<h1 id="titulo">Portafolio - ${ cliente.getNombre() } - $${ cliente.getSaldo() }</h1>
 		<nav>
 			<ul>
-			  <li><a href="#">Inicio</a></li>
-			  <li><a href="#">Transferencias</a></li>
-			  <li><a href="consulta.jsp">Consultas</a></li>
-			  <li><a href="#">Acerca de</a></li>
-			  <li><a href="login.jsp">Salir</a></li>
+			  <li><a href="javascript:redireccionar('portafolio.jsp');">Inicio</a></li>
+			  <li><a href="javascript:redireccionar('transferencia.jsp');">Transferencias</a></li>
+			  <li><a href="javascript:redireccionar('consulta.jsp');">Consultas</a></li>
+			  <li><a href="javascript:redireccionar('AcercaDe.jsp');">Acerca de</a></li>
+			  <li><a href="javascript:redireccionar('login.jsp');">Salir</a></li>
 			</ul>
 		</nav>
 		
@@ -241,6 +250,7 @@
 	            <form id="miForm" action="ControladorTransaccion" method="post">
 	            	<input id="tipo" type="hidden" name="transaccion">
 	            	<input type="hidden" name="id_cliente" value= ${ cliente.getId() }>
+	            	<input id="activo" type="hidden" name="activo">
 	            	<input id="cantidadASetear" type="hidden" name="cantidadInicial">
 	            	<input id="producto" type="text"  name="nombre"><br>
 	            	<input id="precio" type="text" name="precio"><br>
@@ -252,6 +262,11 @@
    		</div>
    		
 <!----------------------------------------------------------------------------------------------------->
+
+	<form action="ControladorLogin" name="forma" method="post">
+		<input id="direccion" type="hidden" name="direccion" value="">
+		<input id="id_cliente" type="hidden" name="id_cliente" value="${ cliente.getId() }" >
+	</form>
 		
 </body>
 </html>

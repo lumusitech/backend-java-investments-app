@@ -78,15 +78,7 @@ public class ControladorTransaccion extends HttpServlet {
 		int id_producto = producto.getId();
 		Double precio = producto.getPrecio();
 		
-		System.out.println(producto);
-		
-		System.out.println("Productos disponibles: "+ producto.getCantidad() );
-		
-		System.out.println("Lo que yo compré: "+cantidad);
-		
 		producto.setCantidad(producto.getCantidad() - cantidad);
-		
-		System.out.println("Ahora quedan: "+producto.getCantidad());
 		
 		//Recibimos id del cliente desde el front
 		int id_cliente = Integer.parseInt(request.getParameter("id_cliente"));
@@ -94,29 +86,18 @@ public class ControladorTransaccion extends HttpServlet {
 		
 		Double total = ( cliente.getSaldo() - (cantidad * precio) );
 		
-		System.out.println("El saldo que tenía el cliente: "+cliente.getSaldo());
-		System.out.println("Menos lo que que me sale comprar: "+cantidad * precio);
-		System.out.println("Nos da: "+total);
-		
-		System.out.println("El total es menor a la comisión que me cobran? "+ (total > COMISION));
-		
 		if( total >= COMISION ) {  //programar cuando no se cumple esto, el error
-			
-			System.out.println("Como es menor, se procede a guardar la transacción");
 			
 			cliente.setSaldo(total - COMISION);
 			
 			//Creamos la nueva transacción
 			String fecha = obtenerFechaActual();
 			TipoTransaccion tipo = TipoTransaccion.COMPRA;
-			Transaccion transaccion = new Transaccion(fecha, cantidad, id_cliente, id_producto, (cantidad * precio), tipo);
 			
-			System.out.println("La transacción a guardar es:\n"+transaccion);
+			Transaccion transaccion = new Transaccion(fecha, cantidad, id_cliente, id_producto, (cantidad * precio), tipo);
 			
 			//Guardamos el id de transacción
 			int idTransaccion = this.modeloTransaccion.realizarTransaccionCompra(transaccion);//ok
-			
-			System.out.println("Seguardó con el id: "+idTransaccion);
 			
 			//Actualizamos el saldo del cliente
 			this.modeloTransaccion.actualizarSaldo(cliente); //ok
@@ -138,7 +119,7 @@ public class ControladorTransaccion extends HttpServlet {
 			request.setAttribute("cliente", cliente);
 			request.setAttribute("productosCliente", productosCliente);
 			request.setAttribute("errorSaldo", false);
-			RequestDispatcher miDispatcher = request.getRequestDispatcher("/portafolio.jsp");
+			RequestDispatcher miDispatcher = request.getRequestDispatcher("/redireccionador.jsp");
 			miDispatcher.forward(request, response);
 			
 		}else {
@@ -208,7 +189,7 @@ public class ControladorTransaccion extends HttpServlet {
 				request.setAttribute("productosCliente", productosCliente);
 				request.setAttribute("errorSaldo", false);
 				request.setAttribute("errorCantidad", false);
-				RequestDispatcher miDispatcher = request.getRequestDispatcher("/portafolio.jsp");
+				RequestDispatcher miDispatcher = request.getRequestDispatcher("/redireccionador.jsp");
 				miDispatcher.forward(request, response);
 			}else {
 				//Obtenemos los productos ofrecidos

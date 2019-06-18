@@ -41,20 +41,18 @@ private ModeloTransaccion modeloTransaccion;
 	}
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		//response.getWriter().append("Served at: ").append(request.getContextPath());		
-	}
-
-	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		//Leer los datos que mandaron
-		String instruccion = request.getParameter("instruccion");
+		String instruccion;
+    	//Leer los datos que mandaron
+		if(request.getParameter("instruccion") != null) {
+			instruccion = request.getParameter("instruccion");
+		}else {
+			instruccion = "";
+		}
+		
 		
 		switch(instruccion) {
 		case "login" : try {
@@ -69,8 +67,39 @@ private ModeloTransaccion modeloTransaccion;
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}; break;
-		default : instruccion = "login";
+		default : try {
+					cambiarPagina(request, response);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} break;
 		}
+		
+	}
+
+	private void cambiarPagina(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		String direccion = request.getParameter("direccion");
+		String id_recibido = request.getParameter("id_cliente");
+		Cliente cliente = null;
+		
+		if(!request.getParameter("id_cliente").equals("") ){
+			int id = Integer.parseInt(id_recibido);
+			cliente = this.modeloClientes.getCliente(id);
+			//Mandamos al cliente
+			request.setAttribute("cliente", cliente);
+			//Mandamoslos productos ofrecidos
+			obtenerProductos(request, cliente);
+			
+			//Se envía el cliente y la lista que le corresponde según su perfil
+			ArrayList<Producto> productosCliente = this.modeloTransaccion.getPortafolio(cliente.getId());
+			request.setAttribute("productosCliente", productosCliente);
+			RequestDispatcher miDispatcher = request.getRequestDispatcher(direccion);
+			miDispatcher.forward(request, response);
+		}else {
+			RequestDispatcher miDispatcher = request.getRequestDispatcher("/login.jsp");
+			miDispatcher.forward(request, response);
+		}
+		
 		
 	}
 
@@ -83,7 +112,7 @@ private ModeloTransaccion modeloTransaccion;
 		String nac = request.getParameter("nac");
 		String email = request.getParameter("email");
 		String dni = request.getParameter("dni");
-		Double saldo = 15000.50;
+		Double saldo = 800000.50;
 		
 		if(!nombre.equals("") && !pass.equals("") && !nac.equals("") && !email.equals("") && !dni.equals("")) {//Comprobar lo que se necesite
 			//Crear un objeto de tipo Cliente
